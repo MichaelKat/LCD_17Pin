@@ -1,10 +1,9 @@
 // **********************************************************
 //   LCD_17Pin.ino
 //
-//   Using three 74HC595 IC's, this allows a 17 pin salvaged 
-//   LCD display to show time digitally. It shifts out specific 
-//   sequences of bits to the LCD's 17 pin to display the 
-//   desired digits. Pardon the mess.
+//   Using three 74HC595 IC's, all 17 pins of an LCD can be 
+//   controlled at once to display any desired digits. 
+//   In this program, the LCD is used as a digital clock.
 //   
 //   Author: Michael Katilevsky
 //
@@ -17,19 +16,19 @@ const byte latchPin = 4;
 const byte dataPin = 5;
 const byte clockPin = 6;
 
-byte Seconds;
-byte TenSeconds;
-byte Minutes;
-byte TenMinutes;
+byte minutes;
+byte tenMinutes;
+byte hours;
+byte tenHours;
 
 int duration;
 
 void setup() 
 {
-  Seconds = 0;
-  TenSeconds = 0;
-  Minutes = 0;
-  TenMinutes = 0;
+  minutes = 0;
+  tenMinutes = 0;
+  hours = 0;
+  tenHours = 0;
   
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
@@ -44,28 +43,28 @@ void loop()
   
   while(millis()-startTime < duration)
   {
-  seconds();
-  tenSeconds();
-  minutes();
-  tenMinutes();
+  minutesUpdate();
+  tenMinutesUpdate();
+  hoursUpdate();
+  tenHoursUpdate();
   }
 
-  ++Seconds; // increment the smallest digit (minutes, in this case)
+  ++minutes; // increment the minutes
 }
 
 
 
-void seconds()
+void minutesUpdate()
 {
-  if(Seconds >= 10)
+  if(minutes >= 10)
   {
-    Seconds = 0;
-    ++TenSeconds;
+    minutes = 0;
+    ++tenMinutes;
   }
 
   cleanDigits();
 
-  if(Seconds == 0)
+  if(minutes == 0)
   {
     //ZERO --- 0
     
@@ -100,7 +99,7 @@ void seconds()
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Seconds == 1)
+  else if(minutes == 1)
   {
     //ONE --- 1
     
@@ -129,7 +128,7 @@ void seconds()
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Seconds == 2)
+  else if(minutes == 2)
   {
     //TWO --- 2
     
@@ -164,7 +163,7 @@ void seconds()
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Seconds == 3)
+  else if(minutes == 3)
   {
     //THREE --- 3
     
@@ -199,7 +198,7 @@ void seconds()
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Seconds == 4)
+  else if(minutes == 4)
   {
     //FOUR --- 4
 
@@ -228,7 +227,7 @@ void seconds()
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Seconds == 5)
+  else if(minutes == 5)
   {
     //FIVE --- 5
     
@@ -263,7 +262,7 @@ void seconds()
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Seconds == 6)
+  else if(minutes == 6)
   {
     //SIX --- 6
         
@@ -304,7 +303,7 @@ void seconds()
     digitalWrite(latchPin, HIGH); 
   }
 
-  else if(Seconds == 7)
+  else if(minutes == 7)
   {
     //SEVEN --- 7
     
@@ -333,7 +332,7 @@ void seconds()
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Seconds == 8)
+  else if(minutes == 8)
   {
     //EIGHT --- 8
         
@@ -368,7 +367,7 @@ void seconds()
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Seconds == 9)
+  else if(minutes == 9)
   {
     //NINE --- 9
     
@@ -404,17 +403,17 @@ void seconds()
   }
 }
 
-void tenSeconds()
+void tenMinutesUpdate()
 {
-  if(TenSeconds >= 6)
+  if(tenMinutes >= 6)
   {
-    TenSeconds = 0;
-    ++Minutes;
+    tenMinutes = 0;
+    ++hours;
   }
   
 cleanDigits();
 
-if(TenSeconds == 0)
+if(tenMinutes == 0)
 {
   // ZERO --- 0
   
@@ -449,7 +448,7 @@ if(TenSeconds == 0)
   digitalWrite(latchPin, HIGH);
   }
 
-else if(TenSeconds == 1)
+else if(tenMinutes == 1)
 {
   //ONE --- 1
   
@@ -479,7 +478,7 @@ else if(TenSeconds == 1)
   digitalWrite(latchPin, HIGH);
   }
 
-else if(TenSeconds == 2)
+else if(tenMinutes == 2)
 {
   // TWO --- 2
 
@@ -515,7 +514,7 @@ else if(TenSeconds == 2)
     digitalWrite(latchPin, HIGH);
   }
 
-else if(TenSeconds == 3)
+else if(tenMinutes == 3)
 {
   //THREE --- 3
   
@@ -550,7 +549,7 @@ else if(TenSeconds == 3)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(TenSeconds == 4)
+  else if(tenMinutes == 4)
   {
   //FOUR --- 4
   
@@ -579,7 +578,7 @@ else if(TenSeconds == 3)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(TenSeconds == 5)
+  else if(tenMinutes == 5)
   {
     //FIVE --- 5
     
@@ -614,7 +613,7 @@ else if(TenSeconds == 3)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(TenSeconds == 6)
+  else if(tenMinutes == 6)
   {
     //SIX --- 6
 
@@ -655,7 +654,7 @@ else if(TenSeconds == 3)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(TenSeconds == 7)
+  else if(tenMinutes == 7)
   {
     //SEVEN --- 7
 
@@ -685,7 +684,7 @@ else if(TenSeconds == 3)
   digitalWrite(latchPin, HIGH);
   }
 
-  else if(TenSeconds == 8)
+  else if(tenMinutes == 8)
   {
    //EIGHT --- 8
 
@@ -720,7 +719,7 @@ else if(TenSeconds == 3)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(TenSeconds == 9)
+  else if(tenMinutes == 9)
   {
     //NINE --- 9
 
@@ -756,17 +755,17 @@ else if(TenSeconds == 3)
   }
 }
 
-void minutes()
+void hoursUpdate()
 {
-  if(Minutes >= 10)
+  if(hours >= 10)
   {
-    Minutes = 0;
-    ++TenMinutes;
+    hours = 0;
+    ++tenHours;
   }
 
 cleanDigits();
 
-if(Minutes == 0)
+if(hours == 0)
 {
   // ZERO --- 0
   
@@ -801,7 +800,7 @@ if(Minutes == 0)
   digitalWrite(latchPin, HIGH);
   }
 
-else if(Minutes == 1)
+else if(hours == 1)
 {
   //ONE --- 1
   
@@ -830,7 +829,7 @@ else if(Minutes == 1)
   digitalWrite(latchPin, HIGH);
   }
 
-else if(Minutes == 2)
+else if(hours == 2)
 {
   // TWO --- 2
   
@@ -865,7 +864,7 @@ else if(Minutes == 2)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Minutes == 3)
+  else if(hours == 3)
   {
     //THREE --- 3
   
@@ -900,7 +899,7 @@ else if(Minutes == 2)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Minutes == 4)
+  else if(hours == 4)
   {
   //FOUR --- 4
   
@@ -935,7 +934,7 @@ else if(Minutes == 2)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Minutes == 5)
+  else if(hours == 5)
   {
     //FIVE --- 5
    
@@ -970,7 +969,7 @@ else if(Minutes == 2)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Minutes== 6)
+  else if(hours== 6)
   {
     //SIX --- 6
 
@@ -1011,7 +1010,7 @@ else if(Minutes == 2)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Minutes == 7)
+  else if(hours == 7)
   {
     //SEVEN --- 7
 
@@ -1040,7 +1039,7 @@ else if(Minutes == 2)
   digitalWrite(latchPin, HIGH);
   }
 
-  else if(Minutes == 8)
+  else if(hours == 8)
   {
    //EIGHT --- 8
 
@@ -1075,7 +1074,7 @@ else if(Minutes == 2)
     digitalWrite(latchPin, HIGH);
   }
 
-  else if(Minutes == 9)
+  else if(hours == 9)
   {
     //NINE --- 9
 
@@ -1111,21 +1110,21 @@ else if(Minutes == 2)
   }
 }
 
-void tenMinutes()
+void tenHoursUpdate()
 {
-  if(TenMinutes >= 3)
+  if(tenHours >= 3)
   {
-    Seconds = 0;
-    TenSeconds = 0;
-    Minutes = 0;
-    TenMinutes = 0;
+    minutes = 0;
+    tenMinutes = 0;
+    hours = 0;
+    tenHours = 0;
   }
 
   cleanDigits();
   
-  if(TenMinutes == 0)
+  if(tenHours == 0)
   {
-   if(Minutes == 4)
+   if(hours == 4)
    {
     ; 
    }
@@ -1140,11 +1139,11 @@ void tenMinutes()
    }
   }
 
-  else if(TenMinutes == 1)
+  else if(tenHours == 1)
   {
     //ONE --- 1
   
-  if(Minutes == 4)
+  if(hours == 4)
   {
     digitalWrite(latchPin, LOW);
     shiftOut(dataPin, clockPin, LSBFIRST, B00000000);                     //Rightmost LCD pin
@@ -1198,11 +1197,11 @@ void tenMinutes()
   digitalWrite(latchPin, HIGH);
   }
 
-  else if(TenMinutes == 2)
+  else if(tenHours == 2)
   {
     // TWO --- 2
     
-    if(Minutes == 4)
+    if(hours == 4)
     {
       digitalWrite(latchPin, LOW);
       shiftOut(dataPin, clockPin, LSBFIRST, B00000000);                     //Rightmost LCD pin
